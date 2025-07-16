@@ -1,4 +1,4 @@
-// ===== 10. src/components/common/Button.tsx =====
+// src/components/common/Button.tsx
 import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -51,4 +51,3 @@ export const Button: React.FC<ButtonProps> = ({
     </button>
   );
 };
-

@@ -1,4 +1,4 @@
-// ===== 12. src/components/common/Loading.tsx =====
+// src/components/common/Loading.tsx
 import React from 'react';
 
 interface LoadingProps {

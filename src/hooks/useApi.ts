@@ -1,6 +1,6 @@
 // ===== 1. useApi.ts - Foundation Hook =====
 // src/hooks/useApi.ts
-import { useState, useCallback, useRef } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 interface UseApiState<T> {
   data: T | null;
@@ -10,7 +10,7 @@ interface UseApiState<T> {
 
 interface UseApiOptions<T> {
   immediate?: boolean;
-  onSuccess?: (data: T) => void;
+onSuccess?: (data: T, ...args: any[]) => void;
   onError?: (error: any) => void;
   errorMessage?: string;
 }
@@ -59,7 +59,7 @@ export function useApi<T, Args extends any[] = any[]>(
   }, []);
 
   // Cleanup on unmount
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       isMountedRef.current = false;
     };

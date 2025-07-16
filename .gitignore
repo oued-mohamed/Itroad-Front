@@ -42,3 +42,13 @@ Thumbs.db
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+# ===== Update .gitignore =====
+# Add to your .gitignore file:
+
+# Environment variables
+.env.local
+.env.production.local
+
+# But allow these to be committed:
+# .env.example
+# .env.production

@@ -1,4 +1,3 @@
-// ===== 3. useDocuments.ts - Document Management Hook =====
 // src/hooks/useDocuments.ts
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Document, UploadProgress } from '../types/document';
@@ -62,10 +61,21 @@ export function useDocuments(options: UseDocumentsOptions = {}) {
       setSelectedDocuments(prev => {
         const updated = new Set(prev);
         updated.delete(documentId);
-        return updated;
+        return updated;   
       });
     }
   });
+
+  // Filtered documents based on options - moved before dependent useMemo/useCallback
+  const filteredDocuments = useMemo(() => {
+    if (!filterBy) return documents;
+    
+    return documents.filter(doc => {
+      if (filterBy.type && doc.type !== filterBy.type) return false;
+      if (filterBy.userId && doc.userId !== filterBy.userId) return false;
+      return true;
+    });
+  }, [documents, filterBy]);
 
   // Upload with progress tracking
   const uploadDocument = useCallback(async (file: File) => {
@@ -77,7 +87,10 @@ export function useDocuments(options: UseDocumentsOptions = {}) {
       [fileId]: {
         fileId,
         progress: 0,
-        status: 'pending'
+        status: 'pending',
+        percentage: 0,
+        loaded: 0,
+        total: file.size
       }
     }));
 
@@ -85,7 +98,13 @@ export function useDocuments(options: UseDocumentsOptions = {}) {
       const result = await executeUpload(file, (progress: UploadProgress) => {
         setUploadProgress(prev => ({
           ...prev,
-          [fileId]: { ...progress, fileId }
+          [fileId]: { 
+            ...progress, 
+            fileId,
+            percentage: progress.progress,
+            loaded: progress.loaded || 0,
+            total: progress.total || file.size
+          }
         }));
       });
       
@@ -165,24 +184,14 @@ export function useDocuments(options: UseDocumentsOptions = {}) {
     });
   }, []);
 
+  // Fixed: removed dependency on filteredDocuments and added correct dependencies
   const selectAllDocuments = useCallback(() => {
     setSelectedDocuments(new Set(filteredDocuments.map(doc => doc.id)));
-  }, [documents, filterBy]);
+  }, [filteredDocuments]);
 
   const clearSelection = useCallback(() => {
     setSelectedDocuments(new Set());
   }, []);
-
-  // Filtered documents based on options
-  const filteredDocuments = useMemo(() => {
-    if (!filterBy) return documents;
-    
-    return documents.filter(doc => {
-      if (filterBy.type && doc.type !== filterBy.type) return false;
-      if (filterBy.userId && doc.userId !== filterBy.userId) return false;
-      return true;
-    });
-  }, [documents, filterBy]);
 
   // Grouped documents by type
   const documentsByType = useMemo(() => {
@@ -214,6 +223,13 @@ export function useDocuments(options: UseDocumentsOptions = {}) {
     resetFetch();
     fetchDocuments();
   }, [resetFetch, fetchDocuments]);
+
+  // Effect to handle initial data
+  useEffect(() => {
+    if (fetchedDocuments && fetchedDocuments !== documents) {
+      setDocuments(fetchedDocuments);
+    }
+  }, [fetchedDocuments]);
 
   return {
     // Documents data
@@ -251,4 +267,3 @@ export function useDocuments(options: UseDocumentsOptions = {}) {
     clearSelection,
   };
 }
-

@@ -1,4 +1,4 @@
-// ===== 7. src/services/auth.ts =====
+// src/services/auth.ts
 import api from './api';
 import { LoginCredentials, RegisterData, AuthResponse, User } from '../types/auth';
 
@@ -27,4 +27,3 @@ export const authService = {
     await api.post('/auth/logout');
   }
 };
-

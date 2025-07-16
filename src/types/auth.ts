@@ -26,3 +26,4 @@ export interface AuthState {
   isAuthenticated: boolean;
 }
 
+export type { User } from './user';

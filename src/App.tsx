@@ -1,15 +1,23 @@
-// src/App.tsx - Complete version
+// src/App.tsx - Fixed version
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
-import { Login } from './pages/Login';
-import { Register } from './pages/Register';
-import { Dashboard } from './pages/Dashboard';
-import { Documents } from './pages/Documents';
-import { Profile } from './pages/Profile';
-import { NotFound } from './pages/NotFound';
+
+// Import all pages (using default exports)
+import {Dashboard} from './pages/Dashboard';
+import {Properties} from './pages/Properties';
+import {Clients} from './pages/Clients';
+import {Transactions} from './pages/Transactions';
+import {Documents} from './pages/Documents';
+import Analytics from './pages/Analytics';
+import {Profile} from './pages/Profile';
+import {Login }from './pages/Login';
+import {Register} from './pages/Register';
+import {NotFound} from './pages/NotFound';
+
+import './App.css';
 
 function App() {
   return (
@@ -31,10 +39,42 @@ function App() {
               } 
             />
             <Route 
+              path="/properties" 
+              element={
+                <ProtectedRoute>
+                  <Properties />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/clients" 
+              element={
+                <ProtectedRoute>
+                  <Clients />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/transactions" 
+              element={
+                <ProtectedRoute>
+                  <Transactions />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
               path="/documents" 
               element={
                 <ProtectedRoute>
                   <Documents />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/analytics" 
+              element={
+                <ProtectedRoute>
+                  <Analytics />
                 </ProtectedRoute>
               } 
             />

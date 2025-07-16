@@ -1,4 +1,4 @@
-// ===== 8. src/services/document.ts =====
+// src/services/document.ts
 import api from './api';
 import { Document, UploadProgress } from '../types/document';
 
@@ -22,7 +22,10 @@ export const documentService = {
           onProgress({
             fileId: file.name,
             progress,
-            status: 'uploading'
+            status: 'uploading',
+            percentage: progress,
+            loaded: progressEvent.loaded,
+            total: progressEvent.total
           });
         }
       },
@@ -41,4 +44,3 @@ export const documentService = {
     return response.data;
   }
 };
-

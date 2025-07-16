@@ -1,12 +1,12 @@
 // ===== 8. useClickOutside.ts - Click Outside Hook =====
 // src/hooks/useClickOutside.ts
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, RefObject,useCallback} from 'react';
 
 export function useClickOutside<T extends HTMLElement>(
   callback: () => void,
   enabled: boolean = true
-): React.RefObject<T> {
-  const ref = useRef<T>(null);
+): RefObject<T | null> {
+  const ref = useRef<T | null>(null);
 
   useEffect(() => {
     if (!enabled) return;

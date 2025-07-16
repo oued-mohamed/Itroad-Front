@@ -1,4 +1,4 @@
-// ===== 11. src/components/common/Input.tsx =====
+// src/components/common/Input.tsx
 import React, { forwardRef } from 'react';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -32,4 +32,3 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     );
   }
 );
-

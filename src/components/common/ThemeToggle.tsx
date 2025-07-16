@@ -4,13 +4,13 @@ import React from 'react';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { useToggle } from '../../hooks/useToggle';
 import { Button } from './Button';
-
+import { useClickOutside } from '../../hooks/useClickOutside';
 export const ThemeToggle: React.FC = () => {
   const [theme, setTheme] = useLocalStorage<'light' | 'dark'>('theme', 'light');
   const [isDropdownOpen, toggleDropdown] = useToggle(false);
   
   const dropdownRef = useClickOutside<HTMLDivElement>(() => {
-    toggleDropdown(false);
+    toggleDropdown();
   });
 
   const themes = [
@@ -24,7 +24,7 @@ export const ThemeToggle: React.FC = () => {
   const handleThemeChange = (newTheme: 'light' | 'dark') => {
     setTheme(newTheme);
     document.documentElement.classList.toggle('dark', newTheme === 'dark');
-    toggleDropdown(false);
+    toggleDropdown();
   };
 
   return (
