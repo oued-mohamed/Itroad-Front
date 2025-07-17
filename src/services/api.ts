@@ -1,38 +1,21 @@
-// src/services/api.ts - Updated to support multiple services
+// src/services/api.ts - Updated to use API Gateway
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import { API_CONFIG, AUTH_CONFIG } from '../utils/constants';
 
 class ApiService {
-  private authApi: AxiosInstance;
-  private documentsApi: AxiosInstance;
-  private propertiesApi: AxiosInstance;
-  private clientsApi: AxiosInstance;
-  private transactionsApi: AxiosInstance;
+  private axiosInstance: AxiosInstance;
 
   constructor() {
-    // Create separate instances for each service
-    this.authApi = this.createInstance(API_CONFIG.SERVICES.AUTH);
-    this.documentsApi = this.createInstance(API_CONFIG.SERVICES.DOCUMENTS);
-    this.propertiesApi = this.createInstance(API_CONFIG.SERVICES.PROPERTIES);
-    this.clientsApi = this.createInstance(API_CONFIG.SERVICES.CLIENTS);
-    this.transactionsApi = this.createInstance(API_CONFIG.SERVICES.TRANSACTIONS);
-
-    console.log('🔧 API Services initialized:');
-    console.log('Auth:', API_CONFIG.SERVICES.AUTH);
-    console.log('Properties:', API_CONFIG.SERVICES.PROPERTIES);
-    console.log('Clients:', API_CONFIG.SERVICES.CLIENTS);
-    console.log('Documents:', API_CONFIG.SERVICES.DOCUMENTS);
-    console.log('Transactions:', API_CONFIG.SERVICES.TRANSACTIONS);
-  }
-
-  private createInstance(baseURL: string): AxiosInstance {
-    const instance = axios.create({
-      baseURL,
+    // Single instance pointing to API Gateway
+    this.axiosInstance = axios.create({
+      baseURL: API_CONFIG.BASE_URL, // http://localhost:3001 (API Gateway)
       timeout: API_CONFIG.TIMEOUT,
     });
 
+    console.log('🔧 API Service initialized:', API_CONFIG.BASE_URL);
+
     // Request interceptor for auth token
-    instance.interceptors.request.use((config) => {
+    this.axiosInstance.interceptors.request.use((config) => {
       const token = localStorage.getItem(AUTH_CONFIG.JWT_STORAGE_KEY);
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -41,7 +24,7 @@ class ApiService {
     });
 
     // Response interceptor for error handling
-    instance.interceptors.response.use(
+    this.axiosInstance.interceptors.response.use(
       (response) => response,
       (error: AxiosError) => {
         if (error.response?.status === 401) {
@@ -52,46 +35,48 @@ class ApiService {
         return Promise.reject(error);
       }
     );
-
-    return instance;
   }
 
-  // Getters for each service
+  // Single API instance for all requests
+  public get api() {
+    return this.axiosInstance;
+  }
+
+  // Legacy support - maintain backward compatibility
   public get auth() {
-    return this.authApi;
+    return this.axiosInstance;
   }
 
   public get documents() {
-    return this.documentsApi;
+    return this.axiosInstance;
   }
 
- public get properties() {
-   return this.propertiesApi;
- }
+  public get properties() {
+    return this.axiosInstance;
+  }
 
- public get clients() {
-   return this.clientsApi;
- }
+  public get clients() {
+    return this.axiosInstance;
+  }
 
- public get transactions() {
-   return this.transactionsApi;
- }
+  public get transactions() {
+    return this.axiosInstance;
+  }
 
- // Legacy support - default to auth service
- public get instance() {
-   return this.authApi;
- }
+  public get instance() {
+    return this.axiosInstance;
+  }
 }
 
 const apiService = new ApiService();
 
-// Export individual service instances
-export const authApi = apiService.auth;
-export const documentsApi = apiService.documents;
-export const propertiesApi = apiService.properties;
-export const clientsApi = apiService.clients;
-export const transactionsApi = apiService.transactions;
+// Export single API instance (all requests go through API Gateway)
+export const authApi = apiService.api;
+export const documentsApi = apiService.api;
+export const propertiesApi = apiService.api;
+export const clientsApi = apiService.api;
+export const transactionsApi = apiService.api;
 
-// Legacy exports
+// Main exports
 export { apiService };
-export default apiService.instance;
+export default apiService.api;

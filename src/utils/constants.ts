@@ -1,4 +1,4 @@
-// src/utils/constants.ts - Updated with correct service URLs
+// src/utils/constants.ts - Updated for API Gateway pattern
 
 // Environment detection - simplified for browser compatibility
 const isLocalhost = window.location.hostname === 'localhost' || 
@@ -7,7 +7,7 @@ const isLocalhost = window.location.hostname === 'localhost' ||
 
 // App Configuration
 export const APP_CONFIG = {
-  NAME: '',
+  NAME: 'Adherant',
   VERSION: '1.0.0',
   DESCRIPTION: 'Secure Document Management Platform',
   COMPANY: 'Adherant',
@@ -17,66 +17,66 @@ export const APP_CONFIG = {
   CONTACT_URL: '/contact',
 };
 
-// API Configuration - Updated with correct service ports
+// API Configuration - Updated for API Gateway pattern
 export const API_CONFIG = {
-  // Main API base for auth (keep this for auth endpoints)
-  BASE_URL: 'http://localhost:3001/api',
+  // ALL requests go through API Gateway on port 3001
+  BASE_URL: 'http://localhost:3001',
   TIMEOUT: 30000,
   VERSION: 'v1',
   
-  // Service-specific URLs
-  SERVICES: {
-    AUTH: 'http://localhost:3001/api',
-    DOCUMENTS: 'http://localhost:3002/api',
-    PROPERTIES: 'http://localhost:3004/api',
-    CLIENTS: 'http://localhost:3004/api',  // Points to property service temporarily
-    TRANSACTIONS: 'http://localhost:3005/api',
-  },
-  
-  // API Endpoints
+  // API Endpoints - All routed through API Gateway
   ENDPOINTS: {
     AUTH: {
-      LOGIN: '/auth/login',
-      REGISTER: '/auth/register',
-      REFRESH: '/auth/refresh',
-      LOGOUT: '/auth/logout',
-      ME: '/auth/me',
+      LOGIN: '/api/auth/login',
+      REGISTER: '/api/auth/register',
+      REFRESH: '/api/auth/refresh',
+      LOGOUT: '/api/auth/logout',
+      ME: '/api/auth/me',
     },
     DOCUMENTS: {
-      LIST: '/documents',
-      UPLOAD: '/documents/upload',
-      DELETE: (id: string) => `/documents/${id}`,
-      DOWNLOAD: (id: string) => `/documents/${id}/download`,
+      LIST: '/api/documents',
+      UPLOAD: '/api/documents/upload',
+      DELETE: (id: string) => `/api/documents/${id}`,
+      DOWNLOAD: (id: string) => `/api/documents/${id}/download`,
     },
     PROPERTIES: {
-      LIST: '/properties',
-      CREATE: '/properties',
-      GET: (id: string) => `/properties/${id}`,
-      UPDATE: (id: string) => `/properties/${id}`,
-      DELETE: (id: string) => `/properties/${id}`,
-      SEARCH: '/properties/search',
-      FAVORITES: '/properties/favorites',
+      LIST: '/api/properties',
+      CREATE: '/api/properties',
+      GET: (id: string) => `/api/properties/${id}`,
+      UPDATE: (id: string) => `/api/properties/${id}`,
+      DELETE: (id: string) => `/api/properties/${id}`,
+      SEARCH: '/api/properties/search',
+      FAVORITES: '/api/properties/favorites',
     },
-    CLIENTS: {
-      LIST: '/clients',
-      CREATE: '/clients',
-      GET: (id: string) => `/clients/${id}`,
-      UPDATE: (id: string) => `/clients/${id}`,
-      DELETE: (id: string) => `/clients/${id}`,
-      STATS: '/clients/stats',
+    PROFILES: {
+      LIST: '/api/profiles',
+      CREATE: '/api/profiles',
+      GET: (id: string) => `/api/profiles/${id}`,
+      UPDATE: (id: string) => `/api/profiles/${id}`,
+      DELETE: (id: string) => `/api/profiles/${id}`,
+      STATS: '/api/profiles/stats',
     },
     TRANSACTIONS: {
-      LIST: '/transactions',
-      CREATE: '/transactions',
-      GET: (id: string) => `/transactions/${id}`,
-      UPDATE: (id: string) => `/transactions/${id}`,
-      DELETE: (id: string) => `/transactions/${id}`,
-      STATS: '/transactions/stats',
+      LIST: '/api/transactions',
+      CREATE: '/api/transactions',
+      GET: (id: string) => `/api/transactions/${id}`,
+      UPDATE: (id: string) => `/api/transactions/${id}`,
+      DELETE: (id: string) => `/api/transactions/${id}`,
+      STATS: '/api/transactions/stats',
     },
     PROFILE: {
-      GET: '/profile',
-      UPDATE: '/profile',
+      GET: '/api/profile',
+      UPDATE: '/api/profile',
     }
+  },
+
+  // Legacy service URLs (for backward compatibility if needed)
+  SERVICES: {
+    AUTH: 'http://localhost:3001/api/auth',
+    DOCUMENTS: 'http://localhost:3001/api/documents',
+    PROPERTIES: 'http://localhost:3001/api/properties',
+    CLIENTS: 'http://localhost:3001/api/profiles',  // Renamed to profiles
+    TRANSACTIONS: 'http://localhost:3001/api/transactions',
   }
 };
 
@@ -172,13 +172,14 @@ export const VALIDATION_CONFIG = {
 };
 
 // Debug logging - always show in development
-console.log('🚨 API CONFIG DEBUG:');
+console.log('🚨 API CONFIG DEBUG (API Gateway Pattern):');
 console.log('🔧 Hostname:', window.location.hostname);
 console.log('🔧 Is Localhost:', isLocalhost);
-console.log('🔧 AUTH API:', API_CONFIG.SERVICES.AUTH);
-console.log('🔧 PROPERTIES API:', API_CONFIG.SERVICES.PROPERTIES);
-console.log('🔧 CLIENTS API:', API_CONFIG.SERVICES.CLIENTS);
-console.log('🔧 TRANSACTIONS API:', API_CONFIG.SERVICES.TRANSACTIONS);
+console.log('🔧 API Gateway Base URL:', API_CONFIG.BASE_URL);
+console.log('🔧 Auth Endpoint:', API_CONFIG.ENDPOINTS.AUTH.REGISTER);
+console.log('🔧 Properties Endpoint:', API_CONFIG.ENDPOINTS.PROPERTIES.LIST);
+console.log('🔧 Profiles Endpoint:', API_CONFIG.ENDPOINTS.PROFILES.LIST);
+console.log('🔧 Transactions Endpoint:', API_CONFIG.ENDPOINTS.TRANSACTIONS.LIST);
 console.log('🚨 END DEBUG');
 
 // Make API_CONFIG available globally for debugging
